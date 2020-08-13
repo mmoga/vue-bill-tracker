@@ -1,12 +1,15 @@
 <template>
   <main>
-    <NavBar/>
-    <div class="container flex">
-      <div class="w-1/2">
-        <BillsTable/>
-      </div>
-      <div class="w-1/2">
-        <Chart :bills="activeBills"/>
+    <AddCategory v-if="shouldShowAddCategory" v-on:addCategory="addCategory"/>
+    <div v-else>
+      <NavBar :categories="categories" v-on:triggerShowAddCategory="triggerShowAddCategory"/>
+      <div class="container flex">
+        <div class="w-1/2">
+          <BillsTable/>
+        </div>
+        <div class="w-1/2">
+          <Chart :bills="activeBills"/>
+        </div>
       </div>
     </div>
   </main>
@@ -23,12 +26,43 @@ import NavBar from "./components/NavBar.vue";
 
 export default {
   name: "app",
+
   components: {
     AddCategory,
     AddBill,
     Chart,
     BillsTable,
     NavBar
+  },
+  data() {
+    return {
+      bills: [],
+      categories: [],
+      shouldShowAddCategory: true
+    };
+  },
+  methods: {
+    addCategory(category) {
+      this.categories.push(category);
+      this.shouldShowAddCategory = false;
+    },
+    triggerShowAddCategory() {
+      this.shouldShowAddCategory = true;
+    }
+  },
+  watch: {
+    categories() {
+      localStorage.setItem("categories", JSON.stringify(this.categories));
+    }
+  },
+  mounted() {
+    if (localStorage.getItem("categories")) {
+      this.categories = JSON.parse(localStorage.getItem("categories"));
+    }
+
+    if (!this.categories.length) {
+      this.shouldShowAddCategory = true;
+    }
   }
 };
 </script>
