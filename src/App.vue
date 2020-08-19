@@ -4,17 +4,23 @@
     <div v-else>
       <AddBill v-if="shouldShowAddBill" :categories="categories" v-on:addBill="addBill"/>
       <div v-else>
-        <NavBar :categories="categories" v-on:triggerShowAddCategory="triggerShowAddCategory"/>
+        <NavBar
+          :categories="categories"
+          :activeCategory="activeCategory"
+          v-on:clearActiveCategory="clearActiveCategory"
+          v-on:setActiveCategory="setActiveCategory"
+          v-on:triggerShowAddCategory="triggerShowAddCategory"
+        />
         <div class="container flex">
-          <div class="w-1/2">
+          <div class="w-1/2 bg-gray-200">
             <BillsTable
               :bills="activeBills"
               v-on:triggerShowAddBill="triggerShowAddBill"
               v-on:removeBill="removeBill"
             />
           </div>
-          <div class="w-1/2">
-            <Chart :bills="bills"/>
+          <div class="w-1/2 bg-gray-400 pt-4 pl-4 text-2xl">
+            <Chart :bills="activeBills"/>
           </div>
         </div>
       </div>
@@ -47,7 +53,7 @@ export default {
       bills: [],
       categories: [],
       shouldShowAddCategory: false,
-      shouldShowAddBill: false,
+      shouldShowAddBill: true,
       activeCategory: ""
     };
   },
@@ -70,6 +76,12 @@ export default {
       this.bills = this.bills
         .slice(0, index)
         .concat(this.bills.slice(index + 1, this.bills.length));
+    },
+    clearActiveCategory() {
+      this.activeCategory = "";
+    },
+    setActiveCategory(category) {
+      this.activeCategory = category;
     }
   },
   watch: {
@@ -91,6 +103,15 @@ export default {
 
     if (!this.bills.length && !this.categories.length) {
       this.shouldShowAddCategory = true;
+    }
+  },
+  computed: {
+    activeBills() {
+      return this.bills
+        .filter(bill =>
+          this.activeCategory ? bill.category === this.activeCategory : true
+        )
+        .sort((a, b) => (new Date(a.date) < new Date(b.date) ? 1 : -1));
     }
   }
 };
