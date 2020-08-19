@@ -2,6 +2,7 @@
   <div class="h-100 w-full flex items-center justify-center font-sans">
     <div class="bg-white rounded shadow p-6 m-4 w-full lg:w-3/4 lg:max-w-lg">
       <div class="mb-4">
+        <BackButton v-on:goBack="goBack"/>
         <h1 class="text-grey-darkest">Enter a category of bills</h1>
         <p>e.g. 'Electricity' or 'Gas' or 'Internet'</p>
         <div class="flex mt-4">
@@ -21,6 +22,8 @@
 </template>
 
 <script>
+import BackButton from "./BackButton.vue";
+
 export default {
   name: "AddCategory",
   data: function() {
@@ -28,6 +31,7 @@ export default {
       category: ""
     };
   },
+  components: { BackButton },
   methods: {
     handleClick: function() {
       if (!this.category) {
@@ -36,6 +40,9 @@ export default {
       }
 
       this.$emit("addCategory", this.category);
+    },
+    goBack: function() {
+      this.$emit("goBack");
     }
   }
 };

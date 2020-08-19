@@ -1,8 +1,13 @@
 <template>
   <main>
-    <AddCategory v-if="shouldShowAddCategory" v-on:addCategory="addCategory"/>
+    <AddCategory v-if="shouldShowAddCategory" v-on:addCategory="addCategory" v-on:goBack="goBack"/>
     <div v-else>
-      <AddBill v-if="shouldShowAddBill" :categories="categories" v-on:addBill="addBill"/>
+      <AddBill
+        v-if="shouldShowAddBill"
+        :categories="categories"
+        v-on:addBill="addBill"
+        v-on:goBack="goBack"
+      />
       <div v-else>
         <NavBar
           :categories="categories"
@@ -82,6 +87,10 @@ export default {
     },
     setActiveCategory(category) {
       this.activeCategory = category;
+    },
+    goBack() {
+      this.shouldShowAddCategory = false;
+      this.shouldShowAddBill = false;
     }
   },
   watch: {
